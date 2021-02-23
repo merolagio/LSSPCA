@@ -1,0 +1,20 @@
+Package: LSSPCA
+Type: Package
+Title: Computes Least Squares Sparse Principal Components
+Version: 0.1.0
+Author: Giovanni Maria Merola
+Maintainer: Giovanni Maria Merola <giovanni.merola@xjtlu.edu.cn>
+Description: It provides a single function for computing the SPCs. 
+    Uses leaps to perform different searches for the selection of the variables.
+License: MIT + file LICENSE
+    File: LSSPCA_Licence.txt
+Encoding: UTF-8
+Depends: R (>= 3.6.0)
+LazyData: true
+RoxygenNote: 7.1.1
+Imports: 
+    geigen (>= 2.3),
+    stringr (>= 1.4.0)
+Suggests: 
+    leaps (>= 3.1),
+    elasticnet (>= 1.3)
