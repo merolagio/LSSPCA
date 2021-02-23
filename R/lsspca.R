@@ -9,7 +9,7 @@
 
 #' @title Computes LS SPCA components using different variable selection algorithms
 #'
-#' @description  For each component, the variables are selected so as to explain
+#' @description For each component, the variables are selected so as to explain
 #' a percentage \emph{alpha} of the vexp by the corresponding principal component.
 #' \emph{ind_blocks} is a list containing the indices for each component,
 #'
@@ -19,6 +19,8 @@
 #' @param ncomps number of components to compute
 #' @param spcaMethod how LS SPCA components are computed:
 #' 'u' for uncorrelated, 'c' for correlated and 'p' for projection
+#' @param scalex Logical, if TRUE variables are scaled to unit variance.default  FALSE
+#'    Variables are automatically ventred to zero if they aren't already.
 #' @param subsetSelection how the variables for each component are selected
 #' 'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'
 #' @param force.in NULL or list of indices that must be in component. not for lasso. [NULL]
@@ -349,7 +351,7 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0, spcaMethod = c("u",
         loadlist[[j]] <- a
       }
     }
-    ## deflate K
+    ## deflate X
     if (j <= ncomps)
       K <- K - tcrossprod(scores[, j]) %*% K/sum(scores[, j]^2)  #spcaTutoPack:::deflXCforR(c(scores[, j]), K)
     cvexp[j] <- totvar - sum(K^2)
