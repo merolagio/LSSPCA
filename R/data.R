@@ -84,7 +84,7 @@ NULL
 #' \item{numeric}{Numerical puzzles test, a numerical deduction test, the object being to supply four numbers which will produce four given answers employing the operations of addition, multiplication, or division}
 #' \item{series}{Series completion test, from a series of five numbers, the subject is supposed to deduce the rule of procedure from one number to the next and thus supply the sixth number in the series}
 #' }
-#' @source The complete set of data can be found, for example in the R package MBESS.
+#' @source The complete set of data is included, for example in the R package MBESS.
 
 #' @references
 #' Holzinger, K. J. and Swineford, F. A. (1939). A study in factor analysis: The stability of a bi-factor solution. Supplementary Education Monographs, 48. University of Chicago.
