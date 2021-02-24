@@ -23,11 +23,18 @@
 #'    Variables are automatically ventred to zero if they aren't already.
 #' @param subsetSelection how the variables for each component are selected
 #' 'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'
+#' @param  really.big Must be TRUE to perform exhaustive search on more than 50 variables.
 #' @param force.in NULL or list of indices that must be in component. not for lasso. [NULL]
 #' @param force.out NULL or list of indices cannot be in component. [NULL]
 #' @param selectfromthese NULL or list of indices from which model chosen. [NULL]
 #' @param lsspca_forLasso use lsspca with indices selected with lasso or just the lasso regression
 #' @param lasso_penalty real between 0 and 1, , 0-> ridge regression, 1 -> lasso
+#'
+#' @details  for USPCA, \code{maxcard} cannot be smaller than the order of the components
+#'    computed, so \code{maxcard = c(1, 1, 1)} will be automatically changed to
+#'    \code{maxcard = c(1, 2, 3)}. Exaustive search can be slow for matrices with
+#'    30 or more variables. See the documentation for \code{regsubset} in the package
+#'    \code{leaps} for the option \code{really.big}.
 #' @return a list
 #' \describe{
 #' \item{loadings}{Matrix with the loadings scaled to unit \eqn{L_2} norm.}
@@ -140,9 +147,10 @@
 #' @author Giovanni Merola
 #'
 #' @export
-lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0, spcaMethod = c("u", "c", "p"),
-                   scalex = FALSE,
+lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
+                   spcaMethod = c("u", "c", "p"), scalex = FALSE,
                    subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+                   really.big = FALSE,
                    force.in = NULL, force.out = NULL, selectfromthese = NULL,
                    lsspca_forLasso = TRUE, lasso_penalty = 0.5) {
 
@@ -267,8 +275,10 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0, spcaMethod = c("u",
       a <- coe[ind[[j]]]
     }
     else {
-      ssr <- leaps::regsubsets(x = X, y = pc, spcaMethod = subsetSelection[1], nbest = 1, force.in = force.in[[j]],
-                               force.out = force.out[[j]], nvmax = maxcard[j], intercept = FALSE)
+      ssr <- leaps::regsubsets(x = X, y = pc, spcaMethod = subsetSelection[1],
+                               nbest = 1, force.in = force.in[[j]],
+                               force.out = force.out[[j]], nvmax = maxcard[j],
+                               intercept = FALSE, really.big = really.big)
 
       aa <- leaps:::summary.regsubsets(ssr)
       aa$which <- aa$which[, order(match(colnames(aa$which), colnames(X)))]
