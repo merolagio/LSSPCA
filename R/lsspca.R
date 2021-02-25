@@ -194,6 +194,11 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
                              s = "seqrep", l = "lasso")
   if (is.null(subsetSelection))
     stop("please pass a valid variable selection option")
+  if((ncol(X)> 30) & (stringr::str_sub(subsetSelection[1], 1, 1) == "e"))
+    if(really.big == FALSE){
+      warning("exhaustive search with so many variables requires really.big = TRUE")
+      really.big == TRUE
+  }
   spcaMethod <- spcaMethod[1]
 
   if (!requireNamespace("geigen", quietly = TRUE)) {
@@ -396,3 +401,4 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
   out$Call <- match.call()
   return(out)
 }
+
