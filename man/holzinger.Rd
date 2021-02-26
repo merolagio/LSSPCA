@@ -7,6 +7,7 @@
 \format{
 A \emph{263} by \emph{17} matrix. The first 16 variables are centered
 and standardized to unit norm.
+
 \strong{spatial} (SPL)
 \describe{
 \item{visual}{Visual perception test, a nonlanguage multiple-choice test of spatial relations }
@@ -33,7 +34,10 @@ and standardized to unit norm.
 }
 }
 \source{
-The complete set of data can be found, for example in the R package MBESS.
+The complete set of data is included, for example in the R package MBESS.
+}
+\usage{
+data(holzinger)
 }
 \description{
 Holzinger and Swineford (1939) data is widely cited. This dataset

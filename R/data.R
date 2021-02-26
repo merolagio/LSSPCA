@@ -8,6 +8,7 @@
 #'
 #' @name hitters
 #' @docType data
+#' @usage data(hitters)
 #' @format A \emph{263} by \emph{16} matrix. The variables are centered
 #' and standardized to unit norm.
 #' \describe{
@@ -30,7 +31,7 @@
 #' }
 #' @source \url{http://lib.stat.cmu.edu/datasets/baseball.data}
 #' @keywords datasets
-NULL
+"hitters"
 
 
 #' Baseball hitters statistics labels reference table
@@ -40,6 +41,7 @@ NULL
 #'
 #' @name hitters_labels
 #' @docType data
+#' @usage data(hitters_labels)
 #' @format A dataframe with columns
 #' \describe{
 #' \item{short.namethe}{labels ised in plots and tables}
@@ -48,7 +50,7 @@ NULL
 #' }
 #' @source \url{http://lib.stat.cmu.edu/datasets/baseball.data}
 #' @keywords datasets
-NULL
+"hitters_labels"
 
 #' Holzinger student's ability data
 #'
@@ -57,6 +59,7 @@ NULL
 
 #' @name holzinger
 #' @docType data
+#' @usage data(holzinger)
 #' @format A \emph{263} by \emph{17} matrix. The first 16 variables are centered
 #' and standardized to unit norm.
 #'
@@ -91,7 +94,7 @@ NULL
 #'
 #' Ferrara, C., Martella, F., and Vichi, M. (2019). Probabilistic disjoint principal component analysis. Multivariate Behavioral Research, 54(1):47–61.
 #' @keywords datasets
-NULL
+"holzinger"
 
 
 #' Holzinger student's ability data labels reference table
@@ -101,6 +104,7 @@ NULL
 #'
 #' @name holzinger_labels
 #' @docType data
+#' @usage data(holzinger_labels)
 #' @format A dataframe with columns
 #' \describe{
 #' \item{Test}{Name of each test}
@@ -108,5 +112,5 @@ NULL
 #' \item{Long_Ability}{Long name of th abilities}
 #' }
 #' @keywords datasets
-NULL
+"holzinger_labels"
 

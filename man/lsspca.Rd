@@ -12,6 +12,7 @@ lsspca(
   spcaMethod = c("u", "c", "p"),
   scalex = FALSE,
   subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+  really.big = FALSE,
   force.in = NULL,
   force.out = NULL,
   selectfromthese = NULL,
@@ -31,8 +32,13 @@ lsspca(
 \item{spcaMethod}{how LS SPCA components are computed:
 'u' for uncorrelated, 'c' for correlated and 'p' for projection}
 
+\item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
+Variables are automatically ventred to zero if they aren't already.}
+
 \item{subsetSelection}{how the variables for each component are selected
 'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'}
+
+\item{really.big}{Must be TRUE to perform exhaustive search on more than 50 variables.}
 
 \item{force.in}{NULL or list of indices that must be in component. not for lasso. [NULL]}
 
@@ -42,7 +48,7 @@ lsspca(
 
 \item{lsspca_forLasso}{use lsspca with indices selected with lasso or just the lasso regression}
 
-\item{lasso_penalty}{real between 0 and 1, , 0-> ridge regression, 1 -> lasso}
+\item{lasso_penalty}{real between 0 and 1; 0 -> ridge regression, 1 -> lasso}
 }
 \value{
 a list
@@ -69,6 +75,13 @@ a list
 For each component, the variables are selected so as to explain
 a percentage \emph{alpha} of the vexp by the corresponding principal component.
 \emph{ind_blocks} is a list containing the indices for each component,
+}
+\details{
+for USPCA, \code{maxcard} cannot be smaller than the order of the components
+   computed, so \code{maxcard = c(1, 1, 1)} will be automatically changed to
+   \code{maxcard = c(1, 2, 3)}. Exaustive search can be slow for matrices with
+   30 or more variables. See the documentation for \code{regsubset} in the package
+   \code{leaps} for the option \code{really.big}.
 }
 \examples{
 \dontrun{

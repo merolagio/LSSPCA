@@ -29,6 +29,9 @@ and standardized to unit norm.
 \source{
 \url{http://lib.stat.cmu.edu/datasets/baseball.data}
 }
+\usage{
+data(hitters)
+}
 \description{
 16 statistics of 263 major league hitters some of the
 overall career and others relative to the 1986 season. Available at StatLib.

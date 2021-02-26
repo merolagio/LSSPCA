@@ -12,6 +12,9 @@ A dataframe with columns
 \item{Long_Ability}{Long name of th abilities}
 }
 }
+\usage{
+data(holzinger_labels)
+}
 \description{
 This data frame provides descriptive labels for the variables in the
 Holzinger student's ability data matching the short labels used.

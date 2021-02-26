@@ -15,6 +15,9 @@ A dataframe with columns
 \source{
 \url{http://lib.stat.cmu.edu/datasets/baseball.data}
 }
+\usage{
+data(hitters_labels)
+}
 \description{
 This data frame provides descriptive labels for the variables in the
 hitters datasets matching the short labels.
