@@ -29,9 +29,9 @@ output: html
 
   The number of nonzero loadings can be controlled by changing the parameter *alpha* (which is the minimal proportion of variance explained by the Principal Components to be reproduced).
   
-  Orthogonal sparse components (USPCA) are computed by choosing *spcaMethod = "u"*. Correlated components (CSPCA) can be obtained by choosing *spcaMethod = "c"*. The higher order CSPCA coomponents may explain a bit more variance in the  at the price of being correlated. 
+  Orthogonal sparse components (USPCA) are computed by choosing *spcaMethod = "u"*. Correlated components (CSPCA) can be obtained by choosing *spcaMethod = "c"*. The higher order CSPCA components may explain a bit more variance at the price of being correlated. 
   
-  The variables can be selected by using exhaustive, stepwise, forward or backward selection via the argument *subsetSelection* options "e", "s", "f" and "b" respectively.
+  The variables can be selected by using exhaustive, stepwise, forward or backward selection via the argument *subsetSelection* options "e", "s", "f" and "b", respectively.
   
   An example of sparse loadings is in this image
   
