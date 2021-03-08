@@ -5,8 +5,7 @@
 \alias{holzinger}
 \title{Holzinger student's ability data}
 \format{
-A \emph{263} by \emph{17} matrix. The first 16 variables are centered
-and standardized to unit norm.
+A \emph{145} by \emph{12} matrix. The variables are centered to zero mean.
 
 \strong{spatial} (SPL)
 \describe{

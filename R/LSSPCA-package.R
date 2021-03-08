@@ -19,13 +19,13 @@
 #'
 #' @name LSSPCA-package
 #' @docType package
-## #' @import geigen stringr leaps
+## #' @importFrom leaps summary.regsubsets
 #' @importFrom stats cor coef
 #' @references Giovanni M. Merola. 2014. \emph{Least Squares Sparse Principal
 #' Component Analysis: a Backward Elimination approach to attain large
-#' loadings.} Austr.&NZ Jou. Stats.\cr\cr
+#' loadings.} Austr.&NZ Jou. Stats. 57, pp 391-429\cr\cr
 #' Giovanni M. Merola and Gemai Chen. 2019. \emph{Sparse Principal Component Analysis: an
-#' efficient Least Squares approach.} Jou. Multiv. Analysis \url{http://arxiv.org/abs/1406.1381}
+#' efficient Least Squares approach.} Jou. Multiv. Analysis 173, pp 366--382 \url{http://arxiv.org/abs/1406.1381}
 #' @keywords package
 #' @seealso \code{\link{lsspca}} for usage examples.
 ## #' @useDynLib LSSPCA

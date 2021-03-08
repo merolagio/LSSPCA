@@ -14,6 +14,12 @@
 #' a percentage \emph{alpha} of the vexp by the corresponding principal component.
 #' \emph{ind_blocks} is a list containing the indices for each component,
 #'
+#' @usage lsspca(X, alpha = 0.95, maxcard = 0, ncomps = 4,
+#' spcaMethod = c("u", "c", "p"), scalex = FALSE,
+#' subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+#' really.big = FALSE, force.in = NULL, force.out = NULL, selectfromthese = NULL,
+#' lsspca_forLasso = TRUE, lasso_penalty = 0.5)
+#'
 #' @param X The data matrix or data.frame.
 #' @param alpha Real in [0,1]. percentage of variance of the PCs explained by the sparse component.
 #' @param maxcard an integer vector or an integer. Missing values filled with last value.
@@ -21,9 +27,9 @@
 #' @param spcaMethod how LS SPCA components are computed:
 #' 'u' for uncorrelated, 'c' for correlated and 'p' for projection
 #' @param scalex Logical, if TRUE variables are scaled to unit variance.default  FALSE
-#'    Variables are automatically ventred to zero if they aren't already.
+#'    Variables are automatically centered to zero if they aren't already.
 #' @param subsetSelection how the variables for each component are selected
-#' 'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'
+#' 'exhaustive' all subsets, 'seqrep' stepwise, 'backward', 'forward', 'lasso'
 #' @param really.big Must be TRUE to perform exhaustive search on more than 50 variables.
 #' @param force.in NULL or list of indices that must be in component. not for lasso. [NULL]
 #' @param force.out NULL or list of indices cannot be in component. [NULL]
@@ -43,7 +49,7 @@
 ## #' \item{contributions}{Matrix of loadings scaled to unit \eqn{L_1}{ASCII representation} norm.}
 #' \item{loadings}{Matrix with the loadings scaled to unit \eqn{L_2} norm.}
 #' \item{contributions}{Matrix of loadings scaled to unit \eqn{L_1} norm.}
-#' \item{ncomps}{integer number of components computed.}
+#' \item{ncomps}{integer number of components computed. Default is 4.}
 #' \item{cardinality}{Vector with the cardinalities of each loadings.}
 #' \item{ind}{List with the indices of the non-zero loadings for each component.}
 #' \item{loadlist}{A list with only the nonzero ladings for each component.}
@@ -58,11 +64,17 @@
 #' \item{corComp}{Matrix of correlations among the sparse components. Only if ncomps > 1.}
 #' \item{Call}{The called with its arguments.}
 #' }
+#' @references Giovanni M. Merola. 2014. \emph{Least Squares Sparse Principal
+#' Component Analysis: a Backward Elimination approach to attain large
+#' loadings.} Austr.&NZ Jou. Stats. 57, pp 391-429\cr\cr
+#' Giovanni M. Merola and Gemai Chen. 2019. \emph{Sparse Principal Component Analysis: an
+#' efficient Least Squares approach.} Jou. Multiv. Analysis 173, pp 366--382
+#' \url{http://arxiv.org/abs/1406.1381}
 
 #' @examples
 #' \dontrun{
 #' library(LSSPCA)
-#' data(hitters_data)
+#' data(hitters)
 #'
 #' dim(hitters)
 #' ## USPCA 95
@@ -89,7 +101,7 @@
 #' par(mfrow = c(1,1))
 #'
 #' ## Holzinger data
-#' data(holzinger_data)
+#' data(holzinger)
 #' dim(holzinger)
 #'
 #' ## CSPCA
@@ -151,7 +163,7 @@
 #' @author Giovanni Merola
 #'
 #' @export
-lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
+lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 4,
                    spcaMethod = c("u", "c", "p"), scalex = FALSE,
                    subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
                    really.big = FALSE,
@@ -224,7 +236,6 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
       stop("Package \"leaps\" needed for variable selection to work. Please install it.",
            call. = FALSE)
     }
-
   ##-------------------------------------------------------------------##
   ## create objects for output
   ##-------------------------------------------------------------------##
@@ -246,11 +257,12 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
   ## center and scale the variables
   ##-------------------------------------------------------------------##
   if (scalex == TRUE)
-    X <- scale(X) else if (any(abs(colMeans(X)) > 10^-6)) {
-      message("You need to center the columns of X to zero mean, I'll do it for you")
+    X <- scale(X)
+  else
+    if (any(abs(colMeans(X)) > 10^-6)) {
+      message("Centering the columns of X to zero mean")
       X <- scale(X, scale = FALSE)
     }
-
   ##-------------------------------------------------------------------##
   ## compute of the components
   ##-------------------------------------------------------------------##
@@ -259,10 +271,10 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
   j <- 1
   stopComp <- FALSE
   while (stopComp == FALSE) {
-    D <- crossprod(K)  #SPCA3::ataC(K)
+    D <- crossprod(K)
     if (j == 1)
       Cmat <- D
-    r_ee <- eigen(D)  #SPCA3::EigenC(D)
+    r_ee <- eigen(D)
     pc <- K %*% r_ee$vec[, 1]
     lambda <- r_ee$val[1]
     if (j == 1) {
@@ -289,7 +301,7 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
                                force.out = force.out[[j]], nvmax = maxcard[j],
                                intercept = FALSE, really.big = really.big)
 
-      aa <- leaps:::summary.regsubsets(ssr)
+      aa <- summary(ssr)
       aa$which <- aa$which[, order(match(colnames(aa$which), colnames(X)))]
       mrsq <- any(aa$rsq >= alpha)
       if (mrsq == TRUE)
@@ -332,7 +344,7 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
         else {
           if (spcaMethod == "c") {
             M <- crossprod(crossprod(K, Xd))
-            ga <- geigen::geigen(M, Sd, symmetric = TRUE)  ##SPCA3::GenEigenC(M, Sd)
+            ga <- geigen::geigen(M, Sd, symmetric = TRUE)
             a <- ga$vec[, card[j]]
           }
           if (spcaMethod == "p") {
@@ -379,16 +391,19 @@ lsspca <- function(X, alpha = 0.95, maxcard = 0, ncomps = 0,
     if (j < ncomps)
       j <- j + 1 else stopComp <- TRUE
   }
-
   ##-------------------------------------------------------------------##
   ## create output
   ##-------------------------------------------------------------------##
   ncomps <- nc
   rownames(contributions) <- namx
   rownames(A) <- namx
-  dimnames(PCloadings) = dimnames(A)
-  dimnames(PCscores) = dimnames(scores)
-
+  if (ncomps > 1) {
+    dimnames(PCloadings) = dimnames(A)
+    dimnames(PCscores) = dimnames(scores)
+  }
+  else{
+    names(PCloadings) = rownames(A)
+  }
 
   out <- list(loadings = A[, 1:ncomps], contributions = contributions,
               ncomps = ncomps, cardinality = card[1:ncomps], indices = ind,

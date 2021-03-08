@@ -4,21 +4,11 @@
 \alias{lsspca}
 \title{Computes LS SPCA components using different variable selection algorithms}
 \usage{
-lsspca(
-  X,
-  alpha = 0.95,
-  maxcard = 0,
-  ncomps = 0,
-  spcaMethod = c("u", "c", "p"),
-  scalex = FALSE,
-  subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
-  really.big = FALSE,
-  force.in = NULL,
-  force.out = NULL,
-  selectfromthese = NULL,
-  lsspca_forLasso = TRUE,
-  lasso_penalty = 0.5
-)
+lsspca(X, alpha = 0.95, maxcard = 0, ncomps = 4,
+spcaMethod = c("u", "c", "p"), scalex = FALSE,
+subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+really.big = FALSE, force.in = NULL, force.out = NULL, selectfromthese = NULL,
+lsspca_forLasso = TRUE, lasso_penalty = 0.5)
 }
 \arguments{
 \item{X}{The data matrix or data.frame.}
@@ -33,10 +23,10 @@ lsspca(
 'u' for uncorrelated, 'c' for correlated and 'p' for projection}
 
 \item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
-Variables are automatically ventred to zero if they aren't already.}
+Variables are automatically centered to zero if they aren't already.}
 
 \item{subsetSelection}{how the variables for each component are selected
-'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'}
+'exhaustive' all subsets, 'seqrep' stepwise, 'backward', 'forward', 'lasso'}
 
 \item{really.big}{Must be TRUE to perform exhaustive search on more than 50 variables.}
 
@@ -55,7 +45,7 @@ a list
 \describe{
 \item{loadings}{Matrix with the loadings scaled to unit \eqn{L_2} norm.}
 \item{contributions}{Matrix of loadings scaled to unit \eqn{L_1} norm.}
-\item{ncomps}{integer number of components computed.}
+\item{ncomps}{integer number of components computed. Default is 4.}
 \item{cardinality}{Vector with the cardinalities of each loadings.}
 \item{ind}{List with the indices of the non-zero loadings for each component.}
 \item{loadlist}{A list with only the nonzero ladings for each component.}
@@ -86,7 +76,7 @@ for USPCA, \code{maxcard} cannot be smaller than the order of the components
 \examples{
 \dontrun{
 library(LSSPCA)
-data(hitters_data)
+data(hitters)
 
 dim(hitters)
 ## USPCA 95
@@ -113,7 +103,7 @@ barplot(-hit_uspca95$loadings[, 1], main = "USPCA")
 par(mfrow = c(1,1))
 
 ## Holzinger data
-data(holzinger_data)
+data(holzinger)
 dim(holzinger)
 
 ## CSPCA
@@ -172,6 +162,14 @@ for(k in 1:4){
 par(mfrow = c(1, 1))
 }
 
+}
+\references{
+Giovanni M. Merola. 2014. \emph{Least Squares Sparse Principal
+Component Analysis: a Backward Elimination approach to attain large
+loadings.} Austr.&NZ Jou. Stats. 57, pp 391-429\cr\cr
+Giovanni M. Merola and Gemai Chen. 2019. \emph{Sparse Principal Component Analysis: an
+efficient Least Squares approach.} Jou. Multiv. Analysis 173, pp 366--382
+\url{http://arxiv.org/abs/1406.1381}
 }
 \author{
 Giovanni Merola

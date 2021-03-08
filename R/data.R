@@ -10,7 +10,7 @@
 #' @docType data
 #' @usage data(hitters)
 #' @format A \emph{263} by \emph{16} matrix. The variables are centered
-#' and standardized to unit norm.
+#' to zero mean and standardized to unit variance.
 #' \describe{
 #' \item{TAB_86}{times at bat in 1986}
 #' \item{HIT_86}{hits in 1986}
@@ -60,8 +60,7 @@
 #' @name holzinger
 #' @docType data
 #' @usage data(holzinger)
-#' @format A \emph{263} by \emph{17} matrix. The first 16 variables are centered
-#' and standardized to unit norm.
+#' @format A \emph{145} by \emph{12} matrix. The variables are centered to zero mean.
 #'
 #' \strong{spatial} (SPL)
 #' \describe{

@@ -6,7 +6,7 @@
 \title{Baseball hitters career and 1986 season total statistics}
 \format{
 A \emph{263} by \emph{16} matrix. The variables are centered
-and standardized to unit norm.
+to zero mean and standardized to unit variance.
 \describe{
 \item{TAB_86}{times at bat in 1986}
 \item{HIT_86}{hits in 1986}

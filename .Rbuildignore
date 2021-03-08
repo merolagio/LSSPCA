@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^\Ignore$
 ^Licence.md
+^\.github$
+^LICENSE\.md$
+^Readme.md
