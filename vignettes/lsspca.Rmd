@@ -1,0 +1,203 @@
+---
+title: "Introduction to the LSSPCA package"
+author: "Giovanni Merola"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lsspca}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(LSSPCA)
+data("hitters")
+data("hitters_labels")
+```
+
+```{r check_data}
+dim(hitters)
+round(colMeans(hitters), 3)
+round(colMeans(hitters^2), 3)
+
+```
+## Default settings: Uncorrelated SPCs at 95%
+By default *lsspca* computes four orthogonal USPCs explaining 95% of the variance explained by the PCs (*alpha = 0.95*) selecting the variables by evaluating all subsets on which the PCs are regressed. 
+
+Default values *alpha = 0.95, ncomps = 4,  spcaMethod = "u", variableSelection = "exhaustive",  variableSelection = "e"* for *exhaustive* .
+
+```{r uspca95}
+hit_uspca95 = lsspca(hitters)  
+```
+Don't worry about the warnings. They are produced by the exhaustive search 
+
+
+Summaries can be extracted from the output, for example as
+```{r summary_uspca95}
+names(hit_uspca95)
+
+hit_uspca95_su = 
+  with(hit_uspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                          cardinality)
+  )
+
+colnames(hit_uspca95_su) = paste("SPC", 1:4)
+hit_uspca95_su
+```
+The matrices of loadings and contributions are not easy to read. A better way to display th esparse laodings is
+```{r displayLoads}
+hit_uspca95$loadingslist
+
+lapply(hit_uspca95$loadingslist, function(x) round(100 * x/sum(abs(x)), 1))
+```
+## plots
+SPCs can be visaulized in different ways. A barplot for the costribution can be created as follows
+```{r plot_uspca95, out.width="75%", fig.width = 15, fig.height = 6, fig.cap="% contributions."}
+library(ggplot2)
+
+df1 = data.frame(contributions = c(hit_uspca95$contributions*100),
+                 variable = rep(hitters_labels$short.name, 4),
+                 play = rep(hitters_labels$type, 4), 
+                 component = factor(rep(1:4, each = 16), labels =  paste("SPC", 1:4)))
+
+ggplot(df1, aes(x = variable, y = contributions, fill = play)) +
+  geom_bar(stat =  "identity") +
+  facet_grid(cols = vars(component)) + theme_light() + 
+  theme(panel.grid.major.x = element_blank(), 
+        axis.text.x =  element_text(angle = 90, size = 8),
+        strip.background = element_rect(fill = "white"),
+        strip.text = element_text(size = 16, colour = "black"),
+        legend.key.size = unit(16, "pt"), legend.text = element_text(size = 16)) 
+
+
+```
+
+##  Exploring different sparse solutions  
+
+The options available are (the names should be self-explanatory):
+
+* X must be a data matrix
+* alpha minimum proportion of cumulative variance explained by the PCs to be reproduced by the SPCs
+* maxcard = 0 (can be a vector), 0 means unbounded
+* ncomps = 4
+* spcaMethod = "u" for uncorrelated SPCs, "c" for correlated and "p" for iteratively computed PCs projected on variables
+* scalex = FALSE, if TRUE the variables are centered and scaled to unit variance.  Variables are always centered if they aren't already. 
+
+* variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+* really.big = FALSE, for variable selection
+
+These can be vectors (appply to all SPCs) or a list of vectors
+
+* force.in = NULL, 
+* force.out = NULL, 
+* selectfromthese = NULL
+
+Like other variable selection algorithms, Lasso can be used also to obtain the regressed PCs
+
+* lsspca_forLasso = TRUE, if TRUE computes LS SPCA with variables selected with Lasso
+* lasso_penalty = 0.5
+
+Different sparse solutions can be obtained by changing:
+* alpha, this will affect the cardinality
+* spcaMethod this will affect the corelation between SPCs 
+* variableSelection this will affect the variables selected for each SPC
+  
+Of course, variance explained, cardinality and variables selected for 
+the components are interrelated. So, expect differences.
+
+### Example
+
+Increase the minimal proportion of cumulative variance eexplained (with repsect to that explained by the corresponding PCs) to 99%, by setting *alpha = 0.99*
+```{r divers_uspca90}
+hit_uspca99 = lsspca(hitters, alpha = 0.99, ncomps = 4)
+
+hit_uspca99_su = 
+  with(hit_uspca99, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                          cardinality)
+  )
+
+colnames(hit_uspca99_su) = paste("SPC", 1:4)
+hit_uspca99_su
+hit_uspca95_su
+```
+Much larger cvexp but higher cardinality as well. 
+
+Or better fit for higher order SPCs can be obtained by removing the orthoganality constraint for the last two SPCs, by setting *spcaMethod = c(rep("u", 2), rep("c", 2))*
+```{r}
+hit_uandcspca95 = lsspca(hitters, alpha = 0.95, #ncomps = 4, 
+                         spcaMethod = c(rep("u", 2), rep("c", 2)))
+
+hit_uandcspca95_su = 
+  with(hit_uandcspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                          cardinality)
+  )
+
+colnames(hit_uandcspca95_su) = paste("SPC", 1:4)
+hit_uandcspca95_su
+hit_uspca95_su
+
+## correlation between PCs --------------
+round(hit_uandcspca95$corComp, 2)
+round(cor(hit_uspca95$scores), 6) ## of course $corComp not produced for USPCs
+```
+
+For larger matrices, or just for a second opinion, it is possible to change the variable selection algorithm
+```{r}
+hit_uspca95f = lsspca(hitters, alpha = 0.95, ncomps = 4, variableSelection = "f")
+hit_uspca95f_su = 
+  with(hit_uspca95f, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                              cardinality)
+  )
+
+colnames(hit_uspca95f_su) = paste("SPC", 1:4)
+hit_uspca95f_su
+hit_uspca95_su
+
+hit_uspca95f$loadingslist[[1]]
+hit_uspca95$loadingslist[[1]]
+```
+
+
+## Blocked SPCA 
+
+The function *lsspca_blocked* computes SPCs of subsets of variables. This is not the same as computing standard LSSPCs with restrictions on the variables selected because blocked LSSPCA aims at maximizing only the variance explained of the block of variables considered with each SPC.  
+
+I don't recommend this procedure but, since I used in the tutorial paper, here it is. 
+*lsspca_blocked*  takes three extra arguments
+
+* blocks_list = list(), list of vectors of indices, can overlap. 
+* ncomps_per_block = 1, can be a vector
+* blocks_names = NA, or "Block i"
+
+
+For example, for the three types of playing statistics: 
+```{r block_spca}
+playlist = lapply(levels(hitters_labels$type), function(x, a) which(a == x), a = hitters_labels$type)
+
+hit_bspca95 = lsspca_blocked(hitters, alpha = 0.95, blocks_list =  playlist,
+                             variableSelection = "e")
+```
+This will compute one component per block, more components can be obtained with the parameter *ncomps_per_block*.
+
+```{r block_spca_summ}
+hit_bspca95_su = 
+  with(hit_bspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                           cardinality)
+  )
+
+colnames(hit_bspca95_su) = levels(hitters_labels$type)
+hit_bspca95_su
+hit_uspca95_su
+```
+
+
+
+
+
