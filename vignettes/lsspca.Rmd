@@ -164,8 +164,6 @@ hit_uspca95f$loadingslist[[1]]
 hit_uspca95$loadingslist[[1]]
 ```
 
-
-
 ## Blocked SPCA 
 
 The function *lsspca_blocked* computes SPCs of subsets of variables. This is not the same as computing standard LSSPCs with restrictions on the variables selected because blocked LSSPCA aims at maximizing only the variance explained of the block of variables considered with each SPC.  
