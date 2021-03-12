@@ -5,8 +5,8 @@
 \title{Computes LS SPCA components using different variable selection algorithms}
 \usage{
 lsspca(X, alpha = 0.95, maxcard = 0, ncomps = 4,
-spcaMethod = c("u", "c", "p"), scalex = FALSE,
-subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+spcaMethod = "u", scalex = FALSE,
+variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
 really.big = FALSE, force.in = NULL, force.out = NULL, selectfromthese = NULL,
 lsspca_forLasso = TRUE, lasso_penalty = 0.5)
 }
@@ -25,7 +25,7 @@ lsspca_forLasso = TRUE, lasso_penalty = 0.5)
 \item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
 Variables are automatically centered to zero if they aren't already.}
 
-\item{subsetSelection}{how the variables for each component are selected
+\item{variableSelection}{how the variables for each component are selected
 'exhaustive' all subsets, 'seqrep' stepwise, 'backward', 'forward', 'lasso'}
 
 \item{really.big}{Must be TRUE to perform exhaustive search on more than 50 variables.}
@@ -55,23 +55,22 @@ a list
 \item{rcvexp}{Vector with the \% proportion of cumulative variance explained by each component to that explained by the PCs.}
 \item{scores}{the SPCs scores.}
 \item{PCloadings}{Matrix with the PCs loadings scaled to unit \eqn{L_2} norm. }
-\item{PCs scores}{the PCs scores.}
-\item{method}{method used to compute the loadings}
+\item{PCscores}{the PCs scores.}
+\item{spcaMethod}{method used to compute the sparse loadings}
 \item{corComp}{Matrix of correlations among the sparse components. Only if ncomps > 1.}
 \item{Call}{The called with its arguments.}
 }
 }
 \description{
 For each component, the variables are selected so as to explain
-a percentage \emph{alpha} of the vexp by the corresponding principal component.
-\emph{ind_blocks} is a list containing the indices for each component,
+a percentage \emph{alpha} of the variance explained by the corresponding principal component.
 }
 \details{
 for USPCA, \code{maxcard} cannot be smaller than the order of the components
    computed, so \code{maxcard = c(1, 1, 1)} will be automatically changed to
-   \code{maxcard = c(1, 2, 3)}. Exaustive search can be slow for matrices with
-   30 or more variables. See the documentation for \code{regsubset} in the package
-   \code{leaps} for the option \code{really.big}.
+   \code{maxcard = c(1, 2, 3)}. Exhaustive search can be slow for matrices with
+   30 or more variables. See the documentation for \code{leaps::regsubset}
+   and {glmnet::glmnet} for the options.
 }
 \examples{
 \dontrun{
