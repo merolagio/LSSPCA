@@ -5,8 +5,6 @@
 ## email giovanni.merola@xjtlu.edu.cn
 ##------------------------------------------------------------##
 
-
-
 #' @title Computes LS SPCA components using different variable selection algorithms
 #'
 #'
