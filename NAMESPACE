@@ -3,5 +3,7 @@
 export(lsspca)
 export(lsspca_blocked)
 export(makevexp)
+export(print_spca)
+export(summary_spca)
 importFrom(stats,coef)
 importFrom(stats,cor)
