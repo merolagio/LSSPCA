@@ -9,7 +9,7 @@ output: html
 <!-- badges: start -->
  [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
  [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://choosealicense.com/licenses/mit/)
- [![Last-changedate](https://img.shields.io/badge/last%20change-2021--02--28-yellowgreen.svg)](/commits/master)"
+ [![Last-changedate](https://img.shields.io/badge/last%20change-2021--02--28-yellowgreen.svg)](/commits/main)"
 
 [![R build status](https://github.com/merolagio/LSSPCA//workflows/R-CMD-check/badge.svg)](https://github.com/merolagio/LSSPCA//actions)
 
@@ -24,6 +24,12 @@ output: html
 -  *lsspca_blocked* computes lsspca on specified subsets of variables.
 
 -  *makevexp* computes the variance explained by any component, also not computed with *lsspca*, of course.
+
+It also provides to utilities (not methods for various reasons)
+
+- *print_spca* prints the sparse loadings
+
+- *summary_spca* prints summary statistics for an onìbject produced with lsspca or lsspca_blocked
 
   This is a lightweight package not designed to handle large matrices. A dated (but working, made obsolete on CRAN)  package with methods for plotting and visualizing the PCs is available at [here](https://github.com/merolagio/spca) (or *devtools::install_github("merolagio/spca")*). A new version with fast C++ code and PSPCA is in the making and will be released on CRAN one day. By the way, if you find this package useful, please acknowledge my work. It will make my manager happy :wink:
 

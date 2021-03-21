@@ -18,16 +18,13 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(LSSPCA)
+library(ggplot2)
 data("hitters")
 data("hitters_labels")
 ```
 
-```{r check_data}
-dim(hitters)
-round(colMeans(hitters), 3)
-round(colMeans(hitters^2), 3)
+Hitters data are already scaled to zero mean and unit variance.
 
-```
 ## Default settings: Uncorrelated SPCs at 95%
 By default *lsspca* computes four orthogonal USPCs explaining 95% of the variance explained by the PCs (*alpha = 0.95*) selecting the variables by evaluating all subsets on which the PCs are regressed. 
 
@@ -43,25 +40,24 @@ Summaries can be extracted from the output, for example as
 ```{r summary_uspca95}
 names(hit_uspca95)
 
-hit_uspca95_su = 
-  with(hit_uspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
-                          cardinality)
-  )
-
-colnames(hit_uspca95_su) = paste("SPC", 1:4)
-hit_uspca95_su
+summary_spca(hit_uspca95)
 ```
-The matrices of loadings and contributions are not easy to read. A better way to display th esparse laodings is
+The matrices of loadings and contributions can be printed with 
 ```{r displayLoads}
-hit_uspca95$loadingslist
+print_spca(hit_uspca95)
+```
+By defult it prints the nonzero percentage contributions. Unit $L_2$ norm loadings are displayed by setting *contributions = FALSE* and also the zero losdings with *only.nonzero = FALSE*. 
+
+The matrices of loadings and contributions are not easy to read. 
+A better way to display the sparse laodings and contribution is
+```{r displayLoadingslist}
+lapply(hit_uspca95$loadingslist, function(x) round(x, 2))
 
 lapply(hit_uspca95$loadingslist, function(x) round(100 * x/sum(abs(x)), 1))
 ```
 ## plots
-SPCs can be visaulized in different ways. A barplot for the costribution can be created as follows
+SPCs can be visaulized in different ways. Barplot of the contribution can be created, for example, as follows
 ```{r plot_uspca95, out.width="75%", fig.width = 15, fig.height = 6, fig.cap="% contributions."}
-library(ggplot2)
-
 df1 = data.frame(contributions = c(hit_uspca95$contributions*100),
                  variable = rep(hitters_labels$short.name, 4),
                  play = rep(hitters_labels$type, 4), 
@@ -75,8 +71,6 @@ ggplot(df1, aes(x = variable, y = contributions, fill = play)) +
         strip.background = element_rect(fill = "white"),
         strip.text = element_text(size = 16, colour = "black"),
         legend.key.size = unit(16, "pt"), legend.text = element_text(size = 16)) 
-
-
 ```
 
 ##  Exploring different sparse solutions  
@@ -118,14 +112,8 @@ Increase the minimal proportion of cumulative variance eexplained (with repsect 
 ```{r divers_uspca90}
 hit_uspca99 = lsspca(hitters, alpha = 0.99, ncomps = 4)
 
-hit_uspca99_su = 
-  with(hit_uspca99, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
-                          cardinality)
-  )
-
-colnames(hit_uspca99_su) = paste("SPC", 1:4)
-hit_uspca99_su
-hit_uspca95_su
+summary_spca(hit_uspca99)
+summary_spca(hit_uspca95)
 ```
 Much larger cvexp but higher cardinality as well. 
 
@@ -144,14 +132,8 @@ round(cor(hit_uspca95$scores), 6) ## of course $corComp not produced for USPCs
 For larger matrices, or just for a second opinion, it is possible to change the variable selection algorithm
 ```{r}
 hit_uspca95f = lsspca(hitters, alpha = 0.95, ncomps = 4, variableSelection = "f")
-hit_uspca95f_su = 
-  with(hit_uspca95f, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
-                              cardinality)
-  )
-
-colnames(hit_uspca95f_su) = paste("SPC", 1:4)
-hit_uspca95f_su
-hit_uspca95_su
+summary_spca(hit_uspca95f)
+summary_spca(hit_uspca95)
 
 hit_uspca95f$loadingslist[[1]]
 hit_uspca95$loadingslist[[1]]
@@ -179,14 +161,9 @@ hit_bspca95 = lsspca_blocked(hitters, alpha = 0.95, blocks_list =  playlist,
 This will compute one component per block, more components can be obtained with the parameter *ncomps_per_block*.
 
 ```{r block_spca_summ}
-hit_bspca95_su = 
-  with(hit_bspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
-                           cardinality)
-  )
 
-colnames(hit_bspca95_su) = levels(hitters_labels$type)
-hit_bspca95_su
-hit_uspca95_su
+summary_spca(hit_bspca95)
+summary_spca(hit_uspca95)
 ```
 
 

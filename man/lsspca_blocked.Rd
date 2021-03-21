@@ -2,14 +2,10 @@
 % Please edit documentation in R/lsspca_blocked.R
 \name{lsspca_blocked}
 \alias{lsspca_blocked}
-\title{For each component, the variables are selected so as to explain
-a percentage \emph{alpha} of the vexp by the corresponding principal component.
-\emph{blocks_list} is a list containing the indeies for each component,
-Subsets can be overlapping and need not be exhaustive.}
+\title{Computes LS SPCA components on selected groups of variables}
 \usage{
 lsspca_blocked(X, alpha = 0.95, blocks_list = list(),
-ncomps_per_block = 1, blocks_names = NA,
-maxcard = 0, mincard = 1,
+ncomps_per_block = 1, blocks_names = NA, maxcard = 0,
 spcaMethod = c("u", "c", "p"), scalex = FALSE,
 variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
 lsspca_forLasso = FALSE, lasso_penalty = 0.5, rtn_all_spca = FALSE)
@@ -28,8 +24,6 @@ lsspca_forLasso = FALSE, lasso_penalty = 0.5, rtn_all_spca = FALSE)
 \item{maxcard}{a vector or an integer of maximal cardinality for each block, if USPCA selected
 maxcard[j] cannot be < j}
 
-\item{mincard}{a vector or an integer}
-
 \item{spcaMethod}{char how lsspca is computed "u" = USPCA (default), "c" = CSPCA, "p" = PSPCA}
 
 \item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
@@ -37,23 +31,54 @@ Variables are automatically centered to zero if they aren't already.}
 
 \item{variableSelection}{how the variables in each components are selected
 "exhaustive" = all subsets, "seqrep" = stepwise, "backward", "forward", "lasso".
-See documentation in packages leaps, and elasticnet for lasso.}
+See documentation in packages \code{leaps}, and \code{glmnet} for lasso.}
 
 \item{lsspca_forLasso}{use lsspca with indeies selected with lasso, otherwise
 just the lasso regression}
 
 \item{lasso_penalty}{real between 0 and 1, , 0-> ridge regression, 1 -> lasso}
 
-\item{rtn_all_spca}{logical, should all the block spca objects be returned, dafault FALSE.}
+\item{rtn_all_spca}{logical, should the lsspca results for each blovck be returned?}
 }
 \value{
-an a list
+a list
+\describe{
+\item{loadings}{Matrix with the loadings scaled to unit \eqn{L_2} norm.}
+\item{contributions}{Matrix of loadings scaled to unit \eqn{L_1} norm.}
+\item{ncomps}{integer number of components computed. Default is 4.}
+\item{cardinality}{Vector with the cardinalities of each loadings.}
+\item{ind}{List with the indices of the non-zero loadings for each component.}
+\item{loadingslist}{A list with only the nonzero ladings for each component.}
+\item{vexp}{Vector with the \% variance explained by each component.}
+\item{vexpPC}{Vector with the \% variance explained by each principal component.}
+\item{cvexp}{Vector with the \% cumulative variance explained by each component.}
+\item{rcvexp}{Vector with the \% proportion of cumulative variance explained by each component to that explained by the PCs.}
+\item{scores}{the SPCs scores.}
+\item{PCloadings}{Matrix with the PCs loadings scaled to unit \eqn{L_2} norm. }
+\item{PCscores}{the PCs scores.}
+\item{method}{method used to compute the loadings}
+\item{corComp}{Matrix of correlations among the sparse components. Only if ncomps > 1.}
+\item{Call}{The called with its arguments.}
+}
 }
 \description{
-For each component, the variables are selected so as to explain
-a percentage \emph{alpha} of the vexp by the corresponding principal component.
+Each component, the variables are selected so as to explain
+a percentage \emph{alpha} of the variance explained by the corresponding principal component.
 \emph{blocks_list} is a list containing the indeies for each component,
 Subsets can be overlapping and need not be exhaustive.
+}
+\details{
+Differently from the lsspca function, the components are computed so as
+to explain a given percentage of the variance explained by the PCs of the blocks
+of variables under consideration.
+}
+\references{
+Giovanni M. Merola. 2014. \emph{Least Squares Sparse Principal
+Component Analysis: a Backward Elimination approach to attain large
+loadings.} Austr.&NZ Jou. Stats. 57, pp 391-429\cr\cr
+Giovanni M. Merola and Gemai Chen. 2019. \emph{Sparse Principal Component Analysis: an
+efficient Least Squares approach.} Jou. Multiv. Analysis 173, pp 366--382
+\url{http://arxiv.org/abs/1406.1381}
 }
 \seealso{
 \code{\link{lsspca}}
