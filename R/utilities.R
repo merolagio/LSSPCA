@@ -89,10 +89,10 @@ summary_spca = function(obj, rtn = FALSE, prn = TRUE){
     is.null(obj$cardinality))))
       stop("Need to pass an object created with lsspca")
   else{
-    out = as.matrix(rbind(round(100*rbind(obj$vexp, obj$cvexp, obj$rcvexp), 1),
-                          obj$cardinality))
-    rownames(out) = c("Vexp", "Cvexp", "Rcvexp", "card")
-    colnames(out) = paste("Comp", 1:obj$ncomps)
+    out = with(obj, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
+                            cardinality))
+    dimnames(out) = list(c("Vexp", "Cvexp", "Rcvexp", "card"),
+                         paste("Comp", 1:obj$ncomps))
   }
   if (prn)
     print(out)
