@@ -11,4 +11,5 @@
 ^README_files$
 ^NEWS\.md$
 ^cran-comments\.md$
-
+^Vignttes$
+^Vignettes/.*$

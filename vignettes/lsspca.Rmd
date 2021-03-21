@@ -99,6 +99,7 @@ Like other variable selection algorithms, Lasso can be used also to obtain the r
 * lasso_penalty = 0.5
 
 Different sparse solutions can be obtained by changing:
+
 * alpha, this will affect the cardinality
 * spcaMethod this will affect the corelation between SPCs 
 * variableSelection this will affect the variables selected for each SPC
@@ -115,7 +116,7 @@ hit_uspca99 = lsspca(hitters, alpha = 0.99, ncomps = 4)
 summary_spca(hit_uspca99)
 summary_spca(hit_uspca95)
 ```
-Much larger cvexp but higher cardinality as well. 
+Larger cvexp but higher cardinality as well. 
 
 Or better fit for higher order SPCs can be obtained by removing the orthoganality constraint for the last two SPCs, by setting *spcaMethod = c(rep("u", 2), rep("c", 2))*
 ```{r}
