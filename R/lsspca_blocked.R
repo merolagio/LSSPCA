@@ -1,4 +1,9 @@
 
+##----------------------------------------##
+## lsspca FUNCTION FOR TUTORIAL PAPER
+## Author Giovanni Merola
+##----------------------------------------##
+
 #' For each component, the variables are selected so as to explain
 #' a percentage \emph{alpha} of the vexp by the corresponding principal component.
 #' \emph{blocks_list} is a list containing the indeies for each component,
@@ -8,7 +13,7 @@
 #' ncomps_per_block = 1, blocks_names = NA,
 #' maxcard = 0, mincard = 1,
 #' spcaMethod = c("u", "c", "p"), scalex = FALSE,
-#' subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+#' variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
 #' lsspca_forLasso = FALSE, lasso_penalty = 0.5, rtn_all_spca = FALSE)
 #'
 #' @param X the data matrix.
@@ -22,7 +27,7 @@
 #' @param spcaMethod char how lsspca is computed "u" = USPCA (default), "c" = CSPCA, "p" = PSPCA
 #' @param scalex Logical, if TRUE variables are scaled to unit variance.default  FALSE
 #'    Variables are automatically centered to zero if they aren't already.
-#' @param subsetSelection how the variables in each components are selected
+#' @param variableSelection how the variables in each components are selected
 #'  "exhaustive" = all subsets, "seqrep" = stepwise, "backward", "forward", "lasso".
 #'  See documentation in packages leaps, and elasticnet for lasso.
 #' @param lasso_penalty real between 0 and 1, , 0-> ridge regression, 1 -> lasso
@@ -36,7 +41,7 @@ lsspca_blocked = function(X, alpha = 0.95, blocks_list = list(),
                           ncomps_per_block = 1, blocks_names = NA,
                           maxcard = 0, mincard = 1,
                           spcaMethod = c("u", "c", "p"), scalex = FALSE,
-                          subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+                          variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
                           lsspca_forLasso = FALSE, lasso_penalty = 0.5, rtn_all_spca = FALSE){
   p = ncol(X)
   n = nrow(X)
@@ -92,9 +97,9 @@ lsspca_blocked = function(X, alpha = 0.95, blocks_list = list(),
 
   alpha = makevec(alpha, nblocks)
 
-  subsetSelection = switch(stringr::str_sub(subsetSelection[1], 1, 1), "e" = "exhaustive",
+  variableSelection = switch(stringr::str_sub(variableSelection[1], 1, 1), "e" = "exhaustive",
                      "b"= "backward", "f"= "forward", "s"= "seqrep", "l" = "lasso")
-  if (is.null(subsetSelection))
+  if (is.null(variableSelection))
     stop("need to pass a valid search direction")
   spcaMethod = spcaMethod[1]
   ##-------------------------------------------------------------------##
@@ -134,7 +139,7 @@ lsspca_blocked = function(X, alpha = 0.95, blocks_list = list(),
     spca_list[[j]] <- lsspca(X[,  blocks_list[[j]]], alpha = alpha[j],
                              maxcard = maxcard[j], ncomps = ncomps_per_block[j],
                              spcaMethod = spcaMethod, scalex = FALSE,
-                             subsetSelection = subsetSelection,
+                             variableSelection = variableSelection,
                              force.in = NULL, force.out = NULL, selectfromthese = NULL,
                              lsspca_forLasso = lsspca_forLasso, lasso_penalty = lasso_penalty)
 
@@ -159,7 +164,7 @@ lsspca_blocked = function(X, alpha = 0.95, blocks_list = list(),
   names(loadlist) = blocks_names
   Rx = crossprod(X)
   r_ee = eigen(Rx)
-  PC = X %*% r_ee$vec[, 1:ncomps]
+  PCscores = X %*% r_ee$vec[, 1:ncomps]
   vexpPC = r_ee$val
   totvar = sum(r_ee$val)
   vexpPC = r_ee$val[1: ncomps]/totvar

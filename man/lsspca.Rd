@@ -4,171 +4,57 @@
 \alias{lsspca}
 \title{Computes LS SPCA components using different variable selection algorithms}
 \usage{
-lsspca(X, alpha = 0.95, maxcard = 0, ncomps = 4,
-spcaMethod = "u", scalex = FALSE,
-variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
-really.big = FALSE, force.in = NULL, force.out = NULL, selectfromthese = NULL,
-lsspca_forLasso = TRUE, lasso_penalty = 0.5)
+lsspca(
+  X,
+  alpha = 0.95,
+  ncomps = 4,
+  spcaMethod = "u",
+  variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+  scalex = FALSE,
+  maxcard = 0,
+  force.in = NULL,
+  force.out = NULL,
+  selectfromthese = NULL,
+  lsspca_forLasso = TRUE,
+  lasso_penalty = 0.5
+)
 }
 \arguments{
-\item{X}{The data matrix or data.frame.}
+\item{X}{The data matrix.}
 
 \item{alpha}{Real in [0,1]. percentage of variance of the PCs explained by the sparse component.}
 
-\item{maxcard}{an integer vector or an integer. Missing values filled with last value.}
-
 \item{ncomps}{number of components to compute}
 
-\item{spcaMethod}{how LS SPCA components are computed:
-'u' for uncorrelated, 'c' for correlated and 'p' for projection}
+\item{spcaMethod}{character vector how LS SPCA components are computed:
+"u" for uncorrelated, "c" for correlated and "p" for projection.
+If only one value, the same method is used for all components.}
 
-\item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
-Variables are automatically centered to zero if they aren't already.}
+\item{variableSelection}{how the variables for each components are selected
+'seqrep' stepwise, 'exhaustive' all subsets 'backward', 'forward', 'lasso'}
 
-\item{variableSelection}{how the variables for each component are selected
-'exhaustive' all subsets, 'seqrep' stepwise, 'backward', 'forward', 'lasso'}
+\item{scalex}{= FALSE, whether to scale the variables to unit variance. Variables are
+scaled to zero mean (if needed) even if scaleX = FALSE}
 
-\item{really.big}{Must be TRUE to perform exhaustive search on more than 50 variables.}
+\item{maxcard}{a vector or an integer. Missing values filled with last value.}
 
-\item{force.in}{NULL or list of indices that must be in component. not for lasso. [NULL]}
+\item{force.in}{NULL or list of indeces that must be in component. not for lasso. [NULL]}
 
-\item{force.out}{NULL or list of indices cannot be in component. [NULL]}
+\item{force.out}{NULL or list of indeces cannot be in component. [NULL]}
 
-\item{selectfromthese}{NULL or list of indices from which model chosen. [NULL]}
+\item{selectfromthese}{NULL or list of indeces from which model chosen. [NULL]}
 
-\item{lsspca_forLasso}{use lsspca with indices selected with lasso or just the lasso regression}
+\item{lsspca_forLasso}{use lsspca with indeces selected with lasso or just the lasso regression}
 
-\item{lasso_penalty}{real between 0 and 1; 0 -> ridge regression, 1 -> lasso}
+\item{lasso_penalty}{real between 0 and 1, , 0-> ridge regression, 1 -> lasso}
 }
 \value{
-a list
-\describe{
-\item{loadings}{Matrix with the loadings scaled to unit \eqn{L_2} norm.}
-\item{contributions}{Matrix of loadings scaled to unit \eqn{L_1} norm.}
-\item{ncomps}{integer number of components computed. Default is 4.}
-\item{cardinality}{Vector with the cardinalities of each loadings.}
-\item{ind}{List with the indices of the non-zero loadings for each component.}
-\item{loadlist}{A list with only the nonzero ladings for each component.}
-\item{vexp}{Vector with the \% variance explained by each component.}
-\item{vexpPC}{Vector with the \% variance explained by each principal component.}
-\item{cvexp}{Vector with the \% cumulative variance explained by each component.}
-\item{rcvexp}{Vector with the \% proportion of cumulative variance explained by each component to that explained by the PCs.}
-\item{scores}{the SPCs scores.}
-\item{PCloadings}{Matrix with the PCs loadings scaled to unit \eqn{L_2} norm. }
-\item{PCscores}{the PCs scores.}
-\item{spcaMethod}{method used to compute the sparse loadings}
-\item{corComp}{Matrix of correlations among the sparse components. Only if ncomps > 1.}
-\item{Call}{The called with its arguments.}
-}
+a list  with vif for each component
 }
 \description{
 For each component, the variables are selected so as to explain
-a percentage \emph{alpha} of the variance explained by the corresponding principal component.
-}
-\details{
-for USPCA, \code{maxcard} cannot be smaller than the order of the components
-   computed, so \code{maxcard = c(1, 1, 1)} will be automatically changed to
-   \code{maxcard = c(1, 2, 3)}. Exhaustive search can be slow for matrices with
-   30 or more variables. See the documentation for \code{leaps::regsubset}
-   and {glmnet::glmnet} for the options.
-}
-\examples{
-\dontrun{
-library(LSSPCA)
-data(hitters)
-
-dim(hitters)
-## USPCA 95
-hit_uspca95 = lsspca(X = hitters, alpha = 0.95, ncomps = 4,
-                     spcaMethod = "u", subsectSelection = "e")
-#> Warning message:
-#>  In log(vr) : NaNs produced
-## the warnings come from the variable selection, don't worry
-
-## summaries
-t(data.frame(card = hit_uspca95$cardinality,
-             cvexp = round(hit_uspca95$cvexp, 2),
-             rcvexp = round(hit_uspca95$rcvexp, 2)))
-
-## print loadings individually
-lapply(hit_uspca95$loadlist, function(x) round(x, 2))
-## print contributions individually
-lapply(hit_uspca95$loadlist, function(x) round(x/sum(abs(x)), 2))
-
-## plot PC and USPC loadings
-par(mfrow = c(1, 2))
-barplot(-hit_uspca95$PCloadings[, 1], main = "PCA")
-barplot(-hit_uspca95$loadings[, 1], main = "USPCA")
-par(mfrow = c(1,1))
-
-## Holzinger data
-data(holzinger)
-dim(holzinger)
-
-## CSPCA
-hol_cspca95 = lsspca(X = holzinger, alpha = 0.95, ncomps = 4,
-                     spcaMethod = "c", subsectSelection = "e")
-
-## summaries
-t(data.frame(card = hol_cspca95$cardinality,
-             cvexp = round(hol_cspca95$cvexp, 2),
-             rcvexp = round(hol_cspca95$rcvexp, 2)))
-
-## print loadings
-lapply(hol_cspca95$loadlist, function(x) round(x, 2))
-## print contributions
-lapply(hol_cspca95$loadlist, function(x) round(x/sum(abs(x)), 2))
-
-## correlation between SPCs
-round(hol_cspca95$corComp, 2)
-
-## plot contributions
-barplot(-hol_cspca95$contributions[, 1])
-
-## SPCs scores against PC scores
-plot(hol_cspca95$scores[, 1], hol_cspca95$PCscores[, 1], pch = 16)
-regline = lm(hol_cspca95$PCscores[, 1] ~ hol_cspca95$scores[, 1]- 1)$coef
-abline(a = 0, b = regline, col = 2)
-
-
-## SPCA on each ability separately
-h_groups = lapply(seq(1, 10, 3), function(x) x:(x + 2))
-
-## projection SPCA
-hol_block_spca95 = lsspca(X = holzinger, alpha = 0.95, ncomps = 4,
-                     spcaMethod = "p", subsectSelection = "e",
-                     selectfromthese = h_groups)
-
-## summaries
-t(data.frame(card = hol_block_spca95$cardinality,
-             cvexp = round(hol_block_spca95$cvexp, 2),
-             rcvexp = round(hol_block_spca95$rcvexp, 2)))
-
-## print loadings
-lapply(hol_block_spca95$loadlist, function(x) round(x, 2))
-
-## print contributions
-lapply(hol_block_spca95$loadlist, function(x) round(x/sum(abs(x)), 2))
-
-## correlation between SPCs
-round(hol_block_spca95$corComp, 2)
-
-## plot the contributions for each SPC
-par(mfrow = c(2, 2))
-for(k in 1:4){
-  barplot(-hol_block_spca95$contributions[, k])
-}
-par(mfrow = c(1, 1))
-}
-
-}
-\references{
-Giovanni M. Merola. 2014. \emph{Least Squares Sparse Principal
-Component Analysis: a Backward Elimination approach to attain large
-loadings.} Austr.&NZ Jou. Stats. 57, pp 391-429\cr\cr
-Giovanni M. Merola and Gemai Chen. 2019. \emph{Sparse Principal Component Analysis: an
-efficient Least Squares approach.} Jou. Multiv. Analysis 173, pp 366--382
-\url{http://arxiv.org/abs/1406.1381}
+a percentage \emph{alpha} of the vexp by the corresponding principal component.
+\emph{ind_blocks} is a list containing the indeces for each component,
 }
 \author{
 Giovanni Merola

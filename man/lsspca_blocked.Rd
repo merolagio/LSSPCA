@@ -11,7 +11,7 @@ lsspca_blocked(X, alpha = 0.95, blocks_list = list(),
 ncomps_per_block = 1, blocks_names = NA,
 maxcard = 0, mincard = 1,
 spcaMethod = c("u", "c", "p"), scalex = FALSE,
-subsetSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
+variableSelection = c("exhaustive", "seqrep", "backward", "forward", "lasso"),
 lsspca_forLasso = FALSE, lasso_penalty = 0.5, rtn_all_spca = FALSE)
 }
 \arguments{
@@ -35,7 +35,7 @@ maxcard[j] cannot be < j}
 \item{scalex}{Logical, if TRUE variables are scaled to unit variance.default  FALSE
 Variables are automatically centered to zero if they aren't already.}
 
-\item{subsetSelection}{how the variables in each components are selected
+\item{variableSelection}{how the variables in each components are selected
 "exhaustive" = all subsets, "seqrep" = stepwise, "backward", "forward", "lasso".
 See documentation in packages leaps, and elasticnet for lasso.}
 
