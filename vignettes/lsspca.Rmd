@@ -134,14 +134,7 @@ Or better fit for higher order SPCs can be obtained by removing the orthoganalit
 hit_uandcspca95 = lsspca(hitters, alpha = 0.95, #ncomps = 4, 
                          spcaMethod = c(rep("u", 2), rep("c", 2)))
 
-hit_uandcspca95_su = 
-  with(hit_uandcspca95, rbind(round(rbind(vexp, cvexp, rcvexp)*100, 1),
-                          cardinality)
-  )
-
-colnames(hit_uandcspca95_su) = paste("SPC", 1:4)
-hit_uandcspca95_su
-hit_uspca95_su
+summary_spca(hit_uandcspca95)
 
 ## correlation between PCs --------------
 round(hit_uandcspca95$corComp, 2)
