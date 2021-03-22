@@ -10,6 +10,6 @@
 ^README\.html$
 ^README_files$
 ^NEWS\.md$
-^cran-comments\.md$
-^Vignttes$
-^Vignettes/.*$
+^cran-comments\# .md$
+# ^Vignttes$
+# ^Vignettes/.*$
