@@ -56,7 +56,7 @@ lapply(hit_uspca95$loadingslist, function(x) round(x, 2))
 lapply(hit_uspca95$loadingslist, function(x) round(100 * x/sum(abs(x)), 1))
 ```
 ## plots
-SPCs can be visaulized in different ways. Barplot of the contribution can be created, for example, as follows
+SPCs can be visualized in different ways. Barplot of the contribution can be created, for example, as follows
 ```{r plot_uspca95, out.width="75%", fig.width = 15, fig.height = 6, fig.cap="% contributions."}
 df1 = data.frame(contributions = c(hit_uspca95$contributions*100),
                  variable = rep(hitters_labels$short.name, 4),
