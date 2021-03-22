@@ -43,7 +43,7 @@ jobs:
         run: |
          # install.packages("rlang", dependencies=TRUE)
           install.packages(c("stats", "geigen","stringr", "leaps"),dependencies=TRUE)
-          install.packages(c("elasticnet","glmnet"),dependencies=TRUE)
+          install.packages(c("elasticnet","glmnet", "ggplot2"),dependencies=TRUE)
         shell: Rscript {0}
 
 
