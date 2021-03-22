@@ -23,13 +23,13 @@ output: html
 
 -  *makevexp* computes the variance explained by any component, also not computed with *lsspca*, of course.
 
-It also provides to utilities (not methods for various reasons)
+It also provides 2 utilities (not methods for various reasons)
 
 - *print_spca* prints the sparse loadings
 
 - *summary_spca* prints summary statistics for an onìbject produced with lsspca or lsspca_blocked
 
-  This is a lightweight package not designed to handle large matrices. A dated (but working, made obsolete on CRAN)  package with methods for plotting and visualizing the PCs is available at [here](https://github.com/merolagio/spca) (or *devtools::install_github("merolagio/spca")*). A new version with fast C++ code and PSPCA is in the making and will be released on CRAN one day. By the way, if you find this package useful, please acknowledge my work. It will make my manager happy :wink:
+  This is a lightweight package not designed to handle large matrices. A dated (but working, made obsolete on CRAN)  package with methods for plotting and visualizing the PCs is available [here](https://github.com/merolagio/spca) (or *devtools::install_github("merolagio/spca")*). A new version with fast C++ code and PSPCA is in the making and will be released on CRAN one day. By the way, if you find this package useful, please acknowledge my work. It will make my manager happy :wink:
 
   The number of nonzero loadings can be controlled by changing the parameter *alpha* (which is the minimal proportion of variance explained by the Principal Components to be reproduced).
   
