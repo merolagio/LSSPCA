@@ -27,7 +27,7 @@ It also provides 2 utilities (not methods, for various reasons)
 
 - *print_spca* prints the sparse loadings
 
-- *summary_spca* prints summary statistics for an object produced with lsspca or lsspca_blocked
+- *summary_spca* prints summary statistics for the SPCs produced with *lsspca* or *lsspca_blocked*
 
   This is a lightweight package not designed to handle large matrices. A dated (but working, made obsolete on CRAN)  package with methods for visualizing the PCs is available [here](https://github.com/merolagio/spca) (or *devtools::install_github("merolagio/spca")*). A new version with fast C++ code and PSPCA is in the making and will be released on CRAN one day. By the way, if you find this package useful, please acknowledge my work. It will make my manager happy :wink:
 
