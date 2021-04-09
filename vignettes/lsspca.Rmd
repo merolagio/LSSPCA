@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(LSSPCA)
-library(ggplot2)
+library("LSSPCA")
+library("ggplot2")
 data("hitters")
 data("hitters_labels")
 ```
