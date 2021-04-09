@@ -17,7 +17,7 @@ output: html
   
   LSSPCA provides only 3 functions 
   
--  *lsspca* is the basic function to it computes sparse PCs. 
+-  *lsspca* is the basic function that computes the sparse PCs. 
 
 -  *lsspca_blocked* computes lsspca separately on specified subsets of variables.
 
