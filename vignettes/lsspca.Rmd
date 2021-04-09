@@ -35,16 +35,20 @@ hit_uspca95 = lsspca(hitters)
 ```
 Don't worry about the warnings. They are produced by the exhaustive search 
 
-
-Summaries can be extracted from the output, for example as
-```{r summary_uspca95}
+The function produces a list with the following items
+```{r names_uspca95}
 names(hit_uspca95)
+```
+See the function documentation for details.
 
+Summaries can be extracted with the utility *summary_spca*. This produces
+the net variance and cumulated variance explained by the SPCs, the percentage of cumulative variance explained with respect to the same number of PCs and the cardinality of each SPC.
+```{r summary_uspca95}
 summary_spca(hit_uspca95)
 ```
-The matrices of loadings and contributions can be printed with 
+The matrices of loadings and contributions (scaled to unit $L_1$ norm) can be printed with 
 ```{r displayLoads}
-print_spca(hit_uspca95)
+print_spca(hit_uspca95, contributions = TRUE, only.nonzero = TRUE, digits = 1, threshold = 0.001, prn = TRUE, rtn = FALSE)
 ```
 By defult it prints the nonzero percentage contributions. Unit $L_2$ norm loadings are displayed by setting *contributions = FALSE* and also the zero losdings with *only.nonzero = FALSE*. 
 
@@ -53,10 +57,11 @@ A better way to display the sparse laodings and contribution is
 ```{r displayLoadingslist}
 lapply(hit_uspca95$loadingslist, function(x) round(x, 2))
 
-lapply(hit_uspca95$loadingslist, function(x) round(100 * x/sum(abs(x)), 1))
+## contributions 
+lapply(hit_uspca95$loadingslist[1:2], function(x) round(100 * x/sum(abs(x)), 1))
 ```
 ## plots
-SPCs can be visualized in different ways. Barplot of the contribution can be created, for example, as follows
+The contributions can be visualized in different ways. Barplot of the contribution can be created, for example, as follows
 ```{r plot_uspca95, out.width="75%", fig.width = 15, fig.height = 6, fig.cap="% contributions."}
 df1 = data.frame(contributions = c(hit_uspca95$contributions*100),
                  variable = rep(hitters_labels$short.name, 4),
@@ -72,10 +77,9 @@ ggplot(df1, aes(x = variable, y = contributions, fill = play)) +
         strip.text = element_text(size = 16, colour = "black"),
         legend.key.size = unit(16, "pt"), legend.text = element_text(size = 16)) 
 ```
-
 ##  Exploring different sparse solutions  
 
-The options available are (the names should be self-explanatory):
+The argumentss available are (the names should be self-explanatory ):
 
 * X must be a data matrix
 * alpha minimum proportion of cumulative variance explained by the PCs to be reproduced by the SPCs
@@ -114,29 +118,34 @@ Increase the minimal proportion of cumulative variance eexplained (with repsect 
 hit_uspca99 = lsspca(hitters, alpha = 0.99, ncomps = 4)
 
 summary_spca(hit_uspca99)
+
+hit_uspca95 = lsspca(hitters, alpha = 0.95, ncomps = 4)
+
 summary_spca(hit_uspca95)
 ```
 Larger cvexp but higher cardinality as well. 
 
 Or better fit for higher order SPCs can be obtained by removing the orthoganality constraint for the last two SPCs, by setting *spcaMethod = c(rep("u", 2), rep("c", 2))*
 ```{r}
-hit_uandcspca95 = lsspca(hitters, alpha = 0.95, #ncomps = 4, 
+hit_uandcspca95 = lsspca(hitters, alpha = 0.95, # ncomps = 4, default
                          spcaMethod = c(rep("u", 2), rep("c", 2)))
 
 summary_spca(hit_uandcspca95)
 
-## correlation between PCs --------------
-round(hit_uandcspca95$corComp, 2)
+## correlation between PCs
+round(hit_uandcspca95$corComp, 2) 
 round(cor(hit_uspca95$scores), 6) ## of course $corComp not produced for USPCs
 ```
 
-For larger matrices, or just for a second opinion, it is possible to change the variable selection algorithm
-```{r}
+For larger matrices, or just for a second opinion, it is possible to change the variable selection algorithm. This the output when using *forward selection*
+```{r uspca_fwdsel}
 hit_uspca95f = lsspca(hitters, alpha = 0.95, ncomps = 4, variableSelection = "f")
 summary_spca(hit_uspca95f)
 summary_spca(hit_uspca95)
 
-hit_uspca95f$loadingslist[[1]]
+### loadings from exhaustive search ###
+hit_uspca95f$loadingslist[[1]] 
+### loadings from forward selectionh ###
 hit_uspca95$loadingslist[[1]]
 ```
 
