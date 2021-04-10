@@ -143,9 +143,9 @@ hit_uspca95f = lsspca(hitters, alpha = 0.95, ncomps = 4, variableSelection = "f"
 summary_spca(hit_uspca95f)
 summary_spca(hit_uspca95)
 
-### loadings from exhaustive search ###
+### loadings from exhaustive search
 hit_uspca95f$loadingslist[[1]] 
-### loadings from forward selectionh ###
+### loadings from forward selection
 hit_uspca95$loadingslist[[1]]
 ```
 
