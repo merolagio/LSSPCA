@@ -13,7 +13,7 @@ output: html
 [![Last-changedate](https://img.shields.io/badge/last%20change-2021--04--10-yellowgreen.svg)](/commits/main)"
 <!-- badges: end -->
 
-  This R package is a companion to my tutorial paper published on xxx and computes sparse principal components. 
+  This R package is a companion to my tutorial paper published on xxx and computes sparse principal components by Least Squares Sparse Principal Components Analysis. 
   
   LSSPCA provides only 3 functions 
   
@@ -43,7 +43,7 @@ It also provides 2 utilities (not methods, for various reasons)
 
   The sparse PCs are combinations of only 2, 3 and 4 variables out of 16 but are a (very) close approximation to the original PCs. See by yourself:
 
-![](man/figures/readme_fig2.png)
+![](man/figures/readme_fig2.png) 
 
   Well, the idea is to approximate the data as well as possible with sparse components. Since the PCs give the best approximation of the data, approximating the PCs with sparse components is pretty much the same thing. So, decent sparse components can be obtained by simply projecting (yes, by linear regression, PSPCA) the PCs on a subset of variables, option *spcaMethod = "p"*.
   
